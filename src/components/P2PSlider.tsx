@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, animate } from 'framer-motion';
 import Lottie from 'lottie-react';
 
@@ -74,12 +74,22 @@ const styles: { [key: string]: React.CSSProperties } = {
     justifyContent: 'center',
     alignItems: 'center',
   },
-  orbImage: {
+  orbContent: {
+    width: '100%',
+    height: '100%',
+    borderRadius: '50%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  orbGlowImage: {
     position: 'absolute',
     width: '180px',
     height: '160px',
     top: '50%',
     left: '50%',
+    borderRadius: '50%',
     transform: 'translate(-50%, -50%)',
     pointerEvents: 'none',
   },
@@ -97,6 +107,18 @@ interface P2PSliderProps {
 const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
   const x = useMotionValue(0);
   const [status, setStatus] = useState<'idle' | 'accepting' | 'declining'>('idle');
+
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes pulseGlow {
+        0%   { box-shadow: 0 0 0px 0px rgba(255, 106, 0, 0.4); }
+        50%  { box-shadow: 0 0 40px 5px rgba(255, 106, 0, 0.6); }
+        100% { box-shadow: 0 0 10px 0px rgba(255, 106, 0, 0.4); }
+      }
+    `;
+    document.head.appendChild(style);
+  }, []);
 
   const handleDrag = () => {
     const currentX = x.get();
@@ -173,7 +195,16 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
         onDragEnd={handleDragEnd}
         style={{ ...styles.orbWrapper, x }}
       >
-        <img src={orbImage} alt="Slider Orb" style={styles.orbImage} />
+       <div
+          style={{
+            ...styles.orbContent,
+            ...(status === 'idle' && {
+              animation: 'pulseGlow 3s ease-in-out infinite',
+            }),
+          }}
+        >
+          <img src={orbImage} alt="Slider Orb" style={styles.orbGlowImage} />
+        </div>
       </motion.div>
 
       {/* Accept Indicator */}
