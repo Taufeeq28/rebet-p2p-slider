@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, useMotionValue } from 'framer-motion';
+import { motion, useMotionValue, animate } from 'framer-motion';
 import orbImage from '../assets/StaticAssets/orangeButton.png';
 
 const SLIDER_WIDTH = 440;
@@ -39,6 +39,10 @@ const styles: { [key: string]: React.CSSProperties } = {
 const P2PSlider = () => {
   const x = useMotionValue(0);
 
+  const handleDragEnd = () => {
+    animate(x, 0, { type: 'spring', stiffness: 500, damping: 25 });
+  };
+
   return (
     <div style={styles.sliderContainer}>
       <motion.div
@@ -47,9 +51,10 @@ const P2PSlider = () => {
           left: -(SLIDER_WIDTH / 2) + ORB_WIDTH / 2,
           right: SLIDER_WIDTH / 2 - ORB_WIDTH / 2,
         }}
-        style={{ ...styles.orbWrapper, x }}
         dragElastic={0.1}
         whileTap={{ cursor: 'grabbing' }}
+        style={{ ...styles.orbWrapper, x }}
+        onDragEnd={handleDragEnd}
       >
         <img
           src={orbImage}
