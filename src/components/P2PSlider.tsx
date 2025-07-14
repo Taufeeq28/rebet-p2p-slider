@@ -2,9 +2,12 @@ import React from 'react';
 import { motion, useMotionValue } from 'framer-motion';
 import orbImage from '../assets/StaticAssets/orangeButton.png';
 
+const SLIDER_WIDTH = 440;
+const ORB_WIDTH = 80;
+
 const styles: { [key: string]: React.CSSProperties } = {
   sliderContainer: {
-    width: '440px',
+    width: `${SLIDER_WIDTH}px`,
     height: '94px',
     borderRadius: '26px',
     backgroundColor: '#222',
@@ -14,7 +17,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     position: 'relative',
   },
   orbWrapper: {
-    width: '80px',
+    width: `${ORB_WIDTH}px`,
     height: '72px',
     borderRadius: '50%',
     display: 'flex',
@@ -40,7 +43,13 @@ const P2PSlider = () => {
     <div style={styles.sliderContainer}>
       <motion.div
         drag="x"
+        dragConstraints={{
+          left: -(SLIDER_WIDTH / 2) + ORB_WIDTH / 2,
+          right: SLIDER_WIDTH / 2 - ORB_WIDTH / 2,
+        }}
         style={{ ...styles.orbWrapper, x }}
+        dragElastic={0.1}
+        whileTap={{ cursor: 'grabbing' }}
       >
         <img
           src={orbImage}
