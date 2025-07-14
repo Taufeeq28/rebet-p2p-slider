@@ -1,11 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, useMotionValue, animate } from 'framer-motion';
-import orbImage from '../assets/StaticAssets/orangeButton.png';
+
+import orangeButton from '../assets/StaticAssets/orangeButton.png';
+import redButton from '../assets/StaticAssets/red_button.png';
+import greenButton from '../assets/StaticAssets/green_button.png';
+
 import whiteCheck from '../assets/StaticAssets/white_check.png';
 import whiteClose from '../assets/StaticAssets/white_close.png';
+import greenCheck from '../assets/StaticAssets/green_check.png';
+import greenClose from '../assets/StaticAssets/green_close.png';
+import redCheck from '../assets/StaticAssets/red_check.png';
+import redClose from '../assets/StaticAssets/red_close.png';
 
 const SLIDER_WIDTH = 440;
 const ORB_WIDTH = 80;
+
+const colors = {
+  textIdle: '#FFFFFF',
+  textRed: 'rgba(128, 32, 55, 1)',
+  textGreen: 'rgba(7, 110, 73, 1)',
+};
 
 const styles: { [key: string]: React.CSSProperties } = {
   sliderContainer: {
@@ -69,6 +83,14 @@ interface P2PSliderProps {
 
 const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
   const x = useMotionValue(0);
+  const [status, setStatus] = useState<'idle' | 'accepting' | 'declining'>('idle');
+
+  const handleDrag = () => {
+    const currentX = x.get();
+    if (currentX > 10) setStatus('accepting');
+    else if (currentX < -10) setStatus('declining');
+    else setStatus('idle');
+  };
 
   const handleDragEnd = () => {
     const currentX = x.get();
@@ -81,14 +103,41 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
       onDecline();
     } else {
       animate(x, 0, { type: 'spring', stiffness: 500, damping: 25 });
+      setStatus('idle');
     }
   };
+
+  // Dynamically assign assets
+  let declineColor, acceptColor, declineIconSrc, acceptIconSrc, orbImage;
+
+  switch (status) {
+    case 'declining':
+      declineColor = colors.textRed;
+      acceptColor = colors.textRed;
+      declineIconSrc = redClose;
+      acceptIconSrc = redCheck;
+      orbImage = redButton;
+      break;
+    case 'accepting':
+      declineColor = colors.textGreen;
+      acceptColor = colors.textGreen;
+      declineIconSrc = greenClose;
+      acceptIconSrc = greenCheck;
+      orbImage = greenButton;
+      break;
+    default:
+      declineColor = colors.textIdle;
+      acceptColor = colors.textIdle;
+      declineIconSrc = whiteClose;
+      acceptIconSrc = whiteCheck;
+      orbImage = orangeButton;
+  }
 
   return (
     <div style={styles.sliderContainer}>
       {/* Decline Indicator */}
-      <div style={styles.indicator}>
-        <img src={whiteClose} alt="Decline Icon" style={styles.icon} />
+      <div style={{ ...styles.indicator, color: declineColor }}>
+        <img src={declineIconSrc} alt="Decline Icon" style={styles.icon} />
         <span>Decline</span>
       </div>
 
@@ -101,20 +150,17 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
         }}
         dragElastic={0.1}
         whileTap={{ cursor: 'grabbing' }}
-        style={{ ...styles.orbWrapper, x }}
+        onDrag={handleDrag}
         onDragEnd={handleDragEnd}
+        style={{ ...styles.orbWrapper, x }}
       >
-        <img
-          src={orbImage}
-          alt="Slider Orb"
-          style={styles.orbImage}
-        />
+        <img src={orbImage} alt="Slider Orb" style={styles.orbImage} />
       </motion.div>
 
       {/* Accept Indicator */}
-      <div style={styles.indicator}>
+      <div style={{ ...styles.indicator, color: acceptColor }}>
         <span>Accept</span>
-        <img src={whiteCheck} alt="Accept Icon" style={styles.icon} />
+        <img src={acceptIconSrc} alt="Accept Icon" style={styles.icon} />
       </div>
     </div>
   );
