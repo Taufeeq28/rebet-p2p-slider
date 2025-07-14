@@ -6,67 +6,82 @@ import whiteClose from '../assets/StaticAssets/white_close.png';
 
 const SLIDER_WIDTH = 440;
 const ORB_WIDTH = 80;
-const styles: { [key: string]: React.CSSProperties } = {
-    sliderContainer: {
-      width: `${SLIDER_WIDTH}px`,
-      height: '94px',
-      borderRadius: '26px',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: '0 20px',
-      position: 'relative',
-      cursor: 'grab',
-      transition: 'background 0.4s ease',
-      fontFamily: 'system-ui, sans-serif',
-      overflow: 'hidden',
-      backgroundColor: '#222', // Optional: if dynamic backgrounds not added yet
-    },
-    indicator: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-      fontWeight: 600,
-      fontSize: '22px',
-      zIndex: 1,
-      userSelect: 'none',
-      transition: 'color 0.2s',
-      color: '#fff',
-    },
-    icon: {
-      width: '30px',
-      height: '30px',
-    },
-    orbWrapper: {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      zIndex: 5,
-      width: `${ORB_WIDTH}px`,
-      height: '72px',
-      marginLeft: `-${ORB_WIDTH / 2}px`,
-      marginTop: `-${ORB_WIDTH / 2}px`,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    orbImage: {
-      position: 'absolute',
-      width: '180px',
-      height: '160px',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      pointerEvents: 'none',
-    },
-  };
-  
 
-const P2PSlider = () => {
+const styles: { [key: string]: React.CSSProperties } = {
+  sliderContainer: {
+    width: `${SLIDER_WIDTH}px`,
+    height: '94px',
+    borderRadius: '26px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '0 20px',
+    position: 'relative',
+    cursor: 'grab',
+    transition: 'background 0.4s ease',
+    fontFamily: 'system-ui, sans-serif',
+    overflow: 'hidden',
+    backgroundColor: '#222',
+  },
+  indicator: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    fontWeight: 600,
+    fontSize: '22px',
+    zIndex: 1,
+    userSelect: 'none',
+    transition: 'color 0.2s',
+    color: '#fff',
+  },
+  icon: {
+    width: '30px',
+    height: '30px',
+  },
+  orbWrapper: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    zIndex: 5,
+    width: `${ORB_WIDTH}px`,
+    height: '72px',
+    marginLeft: `-${ORB_WIDTH / 2}px`,
+    marginTop: `-${ORB_WIDTH / 2}px`,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  orbImage: {
+    position: 'absolute',
+    width: '180px',
+    height: '160px',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    pointerEvents: 'none',
+  },
+};
+
+interface P2PSliderProps {
+  onAccept: () => void;
+  onDecline: () => void;
+}
+
+const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
   const x = useMotionValue(0);
 
   const handleDragEnd = () => {
-    animate(x, 0, { type: 'spring', stiffness: 500, damping: 25 });
+    const currentX = x.get();
+    const maxDrag = (SLIDER_WIDTH / 2) - (ORB_WIDTH / 2);
+    const snapTolerance = 4;
+
+    if (currentX >= maxDrag - snapTolerance) {
+      onAccept();
+    } else if (currentX <= -maxDrag + snapTolerance) {
+      onDecline();
+    } else {
+      animate(x, 0, { type: 'spring', stiffness: 500, damping: 25 });
+    }
   };
 
   return (
