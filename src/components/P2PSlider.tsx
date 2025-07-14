@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, useMotionValue, animate } from 'framer-motion';
+import Lottie from 'lottie-react';
 
 import orangeButton from '../assets/StaticAssets/orangeButton.png';
 import redButton from '../assets/StaticAssets/red_button.png';
@@ -11,6 +12,14 @@ import greenCheck from '../assets/StaticAssets/green_check.png';
 import greenClose from '../assets/StaticAssets/green_close.png';
 import redCheck from '../assets/StaticAssets/red_check.png';
 import redClose from '../assets/StaticAssets/red_close.png';
+
+import greenLeftArrows from '../assets/StaticAssets/green_left_arrows.png';
+import greenRightArrows from '../assets/StaticAssets/green_right_arrows.png';
+import redLeftArrows from '../assets/StaticAssets/red_left_arrows.png';
+import redRightArrows from '../assets/StaticAssets/red_right_arrows.png';
+
+import glowingLeftArrows from '../assets/AnimatedAssets/glowing_left_arrows.json';
+import glowingRightArrows from '../assets/AnimatedAssets/glowing_right_arrows.json';
 
 const SLIDER_WIDTH = 440;
 const ORB_WIDTH = 80;
@@ -74,6 +83,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     transform: 'translate(-50%, -50%)',
     pointerEvents: 'none',
   },
+  indicatorArrow: {
+    width: '60px',
+    height: '40px',
+  },
 };
 
 interface P2PSliderProps {
@@ -107,8 +120,7 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
     }
   };
 
-  // Dynamically assign assets
-  let declineColor, acceptColor, declineIconSrc, acceptIconSrc, orbImage;
+  let declineColor, acceptColor, declineIconSrc, acceptIconSrc, orbImage, LeftArrow, RightArrow;
 
   switch (status) {
     case 'declining':
@@ -117,6 +129,8 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
       declineIconSrc = redClose;
       acceptIconSrc = redCheck;
       orbImage = redButton;
+      LeftArrow = () => <img src={redLeftArrows} alt="Left Arrows" style={styles.indicatorArrow} />;
+      RightArrow = () => <img src={redRightArrows} alt="Right Arrows" style={styles.indicatorArrow} />;
       break;
     case 'accepting':
       declineColor = colors.textGreen;
@@ -124,6 +138,8 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
       declineIconSrc = greenClose;
       acceptIconSrc = greenCheck;
       orbImage = greenButton;
+      LeftArrow = () => <img src={greenLeftArrows} alt="Left Arrows" style={styles.indicatorArrow} />;
+      RightArrow = () => <img src={greenRightArrows} alt="Right Arrows" style={styles.indicatorArrow} />;
       break;
     default:
       declineColor = colors.textIdle;
@@ -131,6 +147,8 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
       declineIconSrc = whiteClose;
       acceptIconSrc = whiteCheck;
       orbImage = orangeButton;
+      LeftArrow = () => <Lottie animationData={glowingLeftArrows} loop style={styles.indicatorArrow} />;
+      RightArrow = () => <Lottie animationData={glowingRightArrows} loop style={styles.indicatorArrow} />;
   }
 
   return (
@@ -139,6 +157,7 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
       <div style={{ ...styles.indicator, color: declineColor }}>
         <img src={declineIconSrc} alt="Decline Icon" style={styles.icon} />
         <span>Decline</span>
+        <LeftArrow />
       </div>
 
       {/* Orb */}
@@ -159,6 +178,7 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
 
       {/* Accept Indicator */}
       <div style={{ ...styles.indicator, color: acceptColor }}>
+        <RightArrow />
         <span>Accept</span>
         <img src={acceptIconSrc} alt="Accept Icon" style={styles.icon} />
       </div>
