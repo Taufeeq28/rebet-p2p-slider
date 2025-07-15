@@ -1,69 +1,58 @@
-# React + TypeScript + Vite
+# Rebet P2P Slider
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React-based interactive P2P betting slider with animated orb, gradient transitions, and dynamic feedback effects.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+* Drag-to-Accept or Decline slider UI
+* Animated glowing orb on idle
+* Gradient background changes based on slider direction
+* Real-time icon, color, and arrow changes
+* Modular architecture with reusable components and styles
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── components/
+│   ├── P2PSlider.tsx
+│   ├── Orb.tsx
+│   ├── SliderIndicator.tsx
+│   └── styles/
+│       ├── sliderStyles.ts
+│       ├── orbStyles.ts
+│       └── indicatorStyles.ts
+├── hooks/
+│   └── useDragLogic.ts
+├── utils/
+│   ├── Constants.ts
+│   └── GradientStyles.ts
+├── assets/
+│   ├── StaticAssets/
+│   └── AnimatedAssets/
+└── App.tsx
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Technologies Used
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+* React + TypeScript
+* Framer Motion (drag + animation)
+* Lottie (glowing animated arrows)
+* Modular CSS-in-JS (per component)
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## How It Works
+
+1. **Orb Drag**: Users can drag the orb left or right
+2. **Dynamic Feedback**: Color, orb image, arrow type, and background change based on direction
+3. **Threshold**: Dragging past a threshold triggers accept or decline callback
+4. **Reset**: After confirmation, the user can reset and reuse the slider
+
+## Getting Started
+
+```bash
+npm install
+npm run dev
 ```
+
+---
+
