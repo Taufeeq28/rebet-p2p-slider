@@ -38,13 +38,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '0 20px',
+    padding: '0 10px',
     position: 'relative',
     cursor: 'grab',
     transition: 'background 0.4s ease',
     fontFamily: 'system-ui, sans-serif',
     overflow: 'hidden',
-    backgroundColor: '#222',
   },
   indicator: {
     display: 'flex',
@@ -55,7 +54,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     zIndex: 1,
     userSelect: 'none',
     transition: 'color 0.2s',
-    color: '#fff',
   },
   icon: {
     width: '30px',
@@ -67,12 +65,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     left: '50%',
     zIndex: 5,
     width: `${ORB_WIDTH}px`,
-    height: '72px',
+    height: `72px`,
     marginLeft: `-${ORB_WIDTH / 2}px`,
     marginTop: `-${ORB_WIDTH / 2}px`,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   orbContent: {
     width: '100%',
@@ -112,9 +107,9 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
     const style = document.createElement('style');
     style.innerHTML = `
       @keyframes pulseGlow {
-        0%   { box-shadow: 0 0 0px 0px rgba(255, 106, 0, 0.4); }
-        50%  { box-shadow: 0 0 40px 5px rgba(255, 106, 0, 0.6); }
-        100% { box-shadow: 0 0 10px 0px rgba(255, 106, 0, 0.4); }
+        0%   { box-shadow: 0 0 0px 0px rgba(255, 150, 0, 0.3); }
+        50%  { box-shadow: 0 0 40px 5px rgba(255, 150, 0, 0.45); }
+        100% { box-shadow: 0 0 8px 0px rgba(255, 150, 0, 0.3); }
       }
     `;
     document.head.appendChild(style);
@@ -139,6 +134,44 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
     } else {
       animate(x, 0, { type: 'spring', stiffness: 500, damping: 25 });
       setStatus('idle');
+    }
+  };
+
+  const getSliderStyles = () => {
+    switch (status) {
+      case 'declining':
+        return {
+          backgroundImage:
+            `linear-gradient(to bottom, rgba(98, 22, 49, 1), rgba(255, 90, 139, 1)),
+             radial-gradient(ellipse at top center, rgba(218, 73, 108, 1), transparent 60%),
+             radial-gradient(ellipse at bottom center, rgba(218, 73, 108, 1), transparent 60%),
+             linear-gradient(to right, rgba(98, 22, 49, 1), rgba(98, 22, 49, 1))`,
+          backgroundClip: 'padding-box, border-box, border-box, border-box',
+          backgroundOrigin: 'padding-box',
+          border: '3px solid transparent',
+        };
+      case 'accepting':
+        return {
+          backgroundImage:
+            `linear-gradient(to bottom, rgba(27, 125, 67, 1), rgba(108, 231, 150, 1)),
+             radial-gradient(ellipse at top center, rgba(64, 198, 134, 1), transparent 60%),
+             radial-gradient(ellipse at bottom center, rgba(64, 198, 134, 1), transparent 60%),
+             linear-gradient(to right, rgba(26, 80, 62, 1), rgba(26, 80, 62, 1))`,
+          backgroundClip: 'padding-box, border-box, border-box, border-box',
+          backgroundOrigin: 'padding-box',
+          border: '3px solid transparent',
+        };
+      default:
+        return {
+          backgroundImage:
+            `linear-gradient(to bottom, rgba(20, 20, 27, 1), rgba(37, 37, 47, 1)),
+             radial-gradient(ellipse at top center, rgba(255, 238, 146, 1), transparent 60%),
+             radial-gradient(ellipse at bottom center, rgba(255, 238, 146, 1), transparent 60%),
+             linear-gradient(to right, rgba(252, 66, 51, 1), rgba(252, 66, 51, 1))`,
+          backgroundClip: 'padding-box, border-box, border-box, border-box',
+          backgroundOrigin: 'padding-box',
+          border: '3px solid transparent',
+        };
     }
   };
 
@@ -174,13 +207,20 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
   }
 
   return (
-    <div style={styles.sliderContainer}>
-      {/* Decline Indicator */}
-      <div style={{ ...styles.indicator, color: declineColor }}>
-        <img src={declineIconSrc} alt="Decline Icon" style={styles.icon} />
+    <motion.div style={{ ...styles.sliderContainer, ...getSliderStyles() }}>
+      {/* Decline */}
+      <motion.div style={{ ...styles.indicator, color: declineColor }}>
+        <img src={declineIconSrc} alt="Decline" style={styles.icon} />
         <span>Decline</span>
         <LeftArrow />
-      </div>
+      </motion.div>
+
+      {/* Accept */}
+      <motion.div style={{ ...styles.indicator, color: acceptColor }}>
+        <RightArrow />
+        <span>Accept</span>
+        <img src={acceptIconSrc} alt="Accept" style={styles.icon} />
+      </motion.div>
 
       {/* Orb */}
       <motion.div
@@ -190,30 +230,23 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
           right: SLIDER_WIDTH / 2 - ORB_WIDTH / 2,
         }}
         dragElastic={0.1}
-        whileTap={{ cursor: 'grabbing' }}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
         style={{ ...styles.orbWrapper, x }}
+        whileTap={{ cursor: 'grabbing' }}
       >
-       <div
+        <div
           style={{
             ...styles.orbContent,
             ...(status === 'idle' && {
-              animation: 'pulseGlow 3s ease-in-out infinite',
+              animation: 'pulseGlow 2s ease-in-out infinite',
             }),
           }}
         >
           <img src={orbImage} alt="Slider Orb" style={styles.orbGlowImage} />
         </div>
       </motion.div>
-
-      {/* Accept Indicator */}
-      <div style={{ ...styles.indicator, color: acceptColor }}>
-        <RightArrow />
-        <span>Accept</span>
-        <img src={acceptIconSrc} alt="Accept Icon" style={styles.icon} />
-      </div>
-    </div>
+    </motion.div>
   );
 };
 
