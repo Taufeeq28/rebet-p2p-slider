@@ -2,14 +2,8 @@ import React, { useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import Lottie from 'lottie-react';
 
-import {
-  sliderContainerStyle,
-} from './styles/sliderStyles';
-import {
-  indicatorStyle,
-  iconStyle,
-  arrowStyle,
-} from './styles/indicatorStyles';
+import { sliderContainerStyle } from './styles/sliderStyles';
+import { indicatorStyle, iconStyle, arrowStyle } from './styles/indicatorStyles';
 
 import whiteCheck from '../assets/StaticAssets/white_check.png';
 import whiteClose from '../assets/StaticAssets/white_close.png';
@@ -28,7 +22,6 @@ import glowingRightArrows from '../assets/AnimatedAssets/glowing_right_arrows.js
 import { useDragLogic } from '../hooks/useDragLogic';
 import { getSliderStyles } from '../utils/GradientStyles';
 import { colors } from '../utils/Constants';
-
 import Orb from './Orb';
 
 interface P2PSliderProps {
@@ -66,8 +59,8 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
           acceptColor: colors.textRed,
           declineIconSrc: redClose,
           acceptIconSrc: redCheck,
-          LeftArrow: () => <img src={redLeftArrows} alt="Left Arrows" style={arrowStyle} />,
-          RightArrow: () => <img src={redRightArrows} alt="Right Arrows" style={arrowStyle} />,
+          LeftArrow: () => <img src={redLeftArrows} alt="Decline Arrows" style={arrowStyle} />,
+          RightArrow: () => <img src={redRightArrows} alt="Decline Arrows" style={arrowStyle} />,
         };
       case 'accepting':
         return {
@@ -75,8 +68,8 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
           acceptColor: colors.textGreen,
           declineIconSrc: greenClose,
           acceptIconSrc: greenCheck,
-          LeftArrow: () => <img src={greenLeftArrows} alt="Left Arrows" style={arrowStyle} />,
-          RightArrow: () => <img src={greenRightArrows} alt="Right Arrows" style={arrowStyle} />,
+          LeftArrow: () => <img src={greenLeftArrows} alt="Accept Arrows" style={arrowStyle} />,
+          RightArrow: () => <img src={greenRightArrows} alt="Accept Arrows" style={arrowStyle} />,
         };
       default:
         return {
@@ -84,24 +77,38 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
           acceptColor: colors.textIdle,
           declineIconSrc: whiteClose,
           acceptIconSrc: whiteCheck,
-          LeftArrow: () => <Lottie animationData={glowingLeftArrows} loop style={arrowStyle} />,
-          RightArrow: () => <Lottie animationData={glowingRightArrows} loop style={arrowStyle} />,
+          LeftArrow: () => <Lottie animationData={glowingLeftArrows} loop style={arrowStyle} aria-hidden />,
+          RightArrow: () => <Lottie animationData={glowingRightArrows} loop style={arrowStyle} aria-hidden />,
         };
     }
   }, [status]);
 
   return (
-    <motion.div style={{ ...sliderContainerStyle, ...getSliderStyles(status) }}>
-      <motion.div style={{ ...indicatorStyle, color: declineColor }}>
-        <img src={declineIconSrc} alt="Decline" style={iconStyle} />
+    <motion.div
+      style={{ ...sliderContainerStyle, ...getSliderStyles(status) }}
+      role="group"
+      aria-label="P2P Slider Action Group"
+    >
+      <motion.div
+        style={{ ...indicatorStyle, color: declineColor }}
+        role="button"
+        aria-label="Decline Action"
+        tabIndex={0}
+      >
+        <img src={declineIconSrc} alt="" aria-hidden="true" style={iconStyle} />
         <span>Decline</span>
         <LeftArrow />
       </motion.div>
 
-      <motion.div style={{ ...indicatorStyle, color: acceptColor }}>
+      <motion.div
+        style={{ ...indicatorStyle, color: acceptColor }}
+        role="button"
+        aria-label="Accept Action"
+        tabIndex={0}
+      >
         <RightArrow />
         <span>Accept</span>
-        <img src={acceptIconSrc} alt="Accept" style={iconStyle} />
+        <img src={acceptIconSrc} alt="" aria-hidden="true" style={iconStyle} />
       </motion.div>
 
       <Orb x={x} status={status} onDrag={handleDrag} onDragEnd={handleDragEnd} />
