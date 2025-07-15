@@ -53,6 +53,10 @@ src/
 npm install
 npm run dev
 ```
+## Testing
+
+* Unit testing setup with Jest and React Testing Library is planned but not included in this version.  
+* All interactions and behaviors have been manually tested during development to ensure proper functionality.
 
 ---
 
