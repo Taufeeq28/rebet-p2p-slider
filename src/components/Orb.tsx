@@ -1,15 +1,15 @@
 import React from 'react';
 import { motion, MotionValue } from 'framer-motion';
 
-import orangeButton from '../assets/StaticAssets/orangeButton.png';
-import redButton from '../assets/StaticAssets/red_button.png';
-import greenButton from '../assets/StaticAssets/green_button.png';
-
 import {
   orbWrapperStyle,
   orbContentStyle,
   orbGlowImageStyle,
 } from './styles/orbStyles';
+
+import orangeButton from '../assets/StaticAssets/orangeButton.png';
+import redButton from '../assets/StaticAssets/red_button.png';
+import greenButton from '../assets/StaticAssets/green_button.png';
 
 import { ORB_WIDTH, SLIDER_WIDTH } from '../utils/Constants';
 import type { DragStatus } from '../hooks/useDragLogic';
@@ -55,4 +55,4 @@ const Orb: React.FC<OrbProps> = ({ x, status, onDrag, onDragEnd }) => {
   );
 };
 
-export default Orb;
+export default React.memo(Orb);

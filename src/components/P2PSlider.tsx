@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import Lottie from 'lottie-react';
 
@@ -51,34 +51,44 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
     document.head.appendChild(style);
   }, []);
 
-  // State-based UI assets
-  let declineColor, acceptColor, declineIconSrc, acceptIconSrc, LeftArrow, RightArrow;
-
-  switch (status) {
-    case 'declining':
-      declineColor = colors.textRed;
-      acceptColor = colors.textRed;
-      declineIconSrc = redClose;
-      acceptIconSrc = redCheck;
-      LeftArrow = () => <img src={redLeftArrows} alt="Left Arrows" style={arrowStyle} />;
-      RightArrow = () => <img src={redRightArrows} alt="Right Arrows" style={arrowStyle} />;
-      break;
-    case 'accepting':
-      declineColor = colors.textGreen;
-      acceptColor = colors.textGreen;
-      declineIconSrc = greenClose;
-      acceptIconSrc = greenCheck;
-      LeftArrow = () => <img src={greenLeftArrows} alt="Left Arrows" style={arrowStyle} />;
-      RightArrow = () => <img src={greenRightArrows} alt="Right Arrows" style={arrowStyle} />;
-      break;
-    default:
-      declineColor = colors.textIdle;
-      acceptColor = colors.textIdle;
-      declineIconSrc = whiteClose;
-      acceptIconSrc = whiteCheck;
-      LeftArrow = () => <Lottie animationData={glowingLeftArrows} loop style={arrowStyle} />;
-      RightArrow = () => <Lottie animationData={glowingRightArrows} loop style={arrowStyle} />;
-  }
+  const {
+    declineColor,
+    acceptColor,
+    declineIconSrc,
+    acceptIconSrc,
+    LeftArrow,
+    RightArrow,
+  } = useMemo(() => {
+    switch (status) {
+      case 'declining':
+        return {
+          declineColor: colors.textRed,
+          acceptColor: colors.textRed,
+          declineIconSrc: redClose,
+          acceptIconSrc: redCheck,
+          LeftArrow: () => <img src={redLeftArrows} alt="Left Arrows" style={arrowStyle} />,
+          RightArrow: () => <img src={redRightArrows} alt="Right Arrows" style={arrowStyle} />,
+        };
+      case 'accepting':
+        return {
+          declineColor: colors.textGreen,
+          acceptColor: colors.textGreen,
+          declineIconSrc: greenClose,
+          acceptIconSrc: greenCheck,
+          LeftArrow: () => <img src={greenLeftArrows} alt="Left Arrows" style={arrowStyle} />,
+          RightArrow: () => <img src={greenRightArrows} alt="Right Arrows" style={arrowStyle} />,
+        };
+      default:
+        return {
+          declineColor: colors.textIdle,
+          acceptColor: colors.textIdle,
+          declineIconSrc: whiteClose,
+          acceptIconSrc: whiteCheck,
+          LeftArrow: () => <Lottie animationData={glowingLeftArrows} loop style={arrowStyle} />,
+          RightArrow: () => <Lottie animationData={glowingRightArrows} loop style={arrowStyle} />,
+        };
+    }
+  }, [status]);
 
   return (
     <motion.div style={{ ...sliderContainerStyle, ...getSliderStyles(status) }}>
@@ -94,14 +104,9 @@ const P2PSlider: React.FC<P2PSliderProps> = ({ onAccept, onDecline }) => {
         <img src={acceptIconSrc} alt="Accept" style={iconStyle} />
       </motion.div>
 
-      <Orb
-        x={x}
-        status={status}
-        onDrag={handleDrag}
-        onDragEnd={handleDragEnd}
-      />
+      <Orb x={x} status={status} onDrag={handleDrag} onDragEnd={handleDragEnd} />
     </motion.div>
   );
 };
 
-export default P2PSlider;
+export default React.memo(P2PSlider);
